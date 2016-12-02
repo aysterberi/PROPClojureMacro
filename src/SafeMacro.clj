@@ -1,6 +1,7 @@
 (ns SafeMacro
   (:use clojure.test)
-  (:require clojure.core))
+  (:require clojure.core)
+  (:import (java.io FileReader File Closeable)))
 
 (defmacro safe
   "
@@ -10,17 +11,23 @@
   If an exception is thrown, the exception message is returned instead
   "
   ([expression]
-
-   (try (eval expression)
-         (catch Exception e# (str "Exception: " (.getMessage e#)))
-         )
+   `(try (~@expression)
+        (catch Exception exception# (str "Exception: " (.getMessage exception#))))
     )
-  )
+  ([vec & expression]
+   `(try (with-open ~vec ~@expression)
+         (catch Exception exception# (str "Exception: " (.getMessage exception#))))))
 
 (deftest test-arithmetic-operation
   (is (= 4 (safe (+ 2 2)))))
 
 (deftest test-divide-by-zero
   (is (= "Exception: Divide by zero" (safe (/ 2 0)))))
+
+(deftest test-closeable ; First byte of file.txt: 76 = 'L'
+  (is (= 76 (safe [s (FileReader. (File. "file.txt"))] (.read s)))))
+
+(deftest test-missing-file
+  (is (= "Exception: non-existant (Det går inte att hitta filen)" (safe [s (FileReader. (File. "non-existant"))] (. s read)))))
 
 (run-all-tests)
