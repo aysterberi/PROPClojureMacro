@@ -10,15 +10,15 @@
                 {:id 3 :name "isak"}
                 {:id 4 :name "beatrice"}))
 
-(defmacro select [keys _ coll _ cond _ order-cond]
+(defmacro select [keys _ collection _ where-condition _ order-condition]
   "
   A macro for searching in lists of maps
   "
 
   `(map #(select-keys % [~@keys])
-        (filter #(~(second cond) (get % ~(first cond)) ~(last cond))
-                (sort-by #(get % ~order-cond)
-                         ~@coll)))
+        (filter #(~(second where-condition) (get % ~(first where-condition)) ~(last where-condition))
+                (sort-by #(get % ~order-condition)
+                         ~@collection)))
 
   )
 
