@@ -50,5 +50,5 @@
                  where [:id = 1]
                  orderby :id))))
 
-(run-all-tests)
+(run-tests)
 

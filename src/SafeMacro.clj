@@ -34,4 +34,4 @@
 (deftest test-missing-file
   (is (= "java.io.FileNotFoundException: non-existant (Det går inte att hitta filen)" (safe [s (FileReader. (File. "non-existant"))] (. s read)))))
 
-(run-all-tests)
+(run-tests)
