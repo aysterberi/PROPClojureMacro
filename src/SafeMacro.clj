@@ -1,7 +1,7 @@
 (ns SafeMacro
   (:use clojure.test)
   (:require clojure.core)
-  (:import (java.io FileReader File Closeable)))
+  (:import (java.io FileReader File)))
 
 (defmacro safe
   "
@@ -15,7 +15,10 @@
         (catch Exception exception# (str (.toString exception#))))
     )
   ([vec & expression]
-   ; from https://clojuredocs.org/clojure.core/with-open
+   ;; From https://clojuredocs.org/clojure.core/with-open:
+   ;; Evaluates body in a try expression with names bound to the values
+   ;; of the inits, and a finally clause that calls (.close name) on each
+   ;; name in reverse order
    `(try (with-open ~vec ~@expression)
          (catch Exception exception# (str (.toString exception#))))))
 
@@ -25,7 +28,7 @@
 (deftest test-divide-by-zero
   (is (= "java.lang.ArithmeticException: Divide by zero" (safe (/ 2 0)))))
 
-(deftest test-closeable ; First byte of file.txt: 76 = 'L'
+(deftest test-closeable ;; First byte of file.txt: 76 = 'L'
   (is (= 76 (safe [s (FileReader. (File. "file.txt"))] (.read s)))))
 
 (deftest test-missing-file
