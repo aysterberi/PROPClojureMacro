@@ -15,6 +15,7 @@
         (catch Exception exception# (str (.toString exception#))))
     )
   ([vec & expression]
+   ; from https://clojuredocs.org/clojure.core/with-open
    `(try (with-open ~vec ~@expression)
          (catch Exception exception# (str (.toString exception#))))))
 
