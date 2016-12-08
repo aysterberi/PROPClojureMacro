@@ -12,15 +12,19 @@
 
 (defmacro select [keys _ collection _ where-condition _ order-condition]
   "
-  A macro for searching in lists of maps
+  An sql select-like macro for searching in lists of maps. Takes a vector of [keys] to look up,
+  a collection with key/value pairs, a condition to determine which key/value pairs are selected,
+  and a single key to determine the sort order. Between each argument there is an ignored
+  parameter to match the look of sql select statements:
+  select [keys]
+  from #{collection}
+  where [where-condition]
+  orderby order-condition
   "
-
   `(map #(select-keys % [~@keys])
         (filter #(~(second where-condition) (get % ~(first where-condition)) ~(last where-condition))
                 (sort-by #(get % ~order-condition)
-                         ~@collection)))
-
-  )
+                         ~@collection))))
 
 (deftest test-greater-than
   (is (= `({:id 4, :name "beatrice"} {:id 3, :name "isak"})
