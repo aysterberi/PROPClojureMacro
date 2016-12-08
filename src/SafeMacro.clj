@@ -6,7 +6,7 @@
 (defmacro safe
   "
   takes a vector containting a variable name and its value as its first argument,
-  and an expression as its second argument.
+  and an expression as its second argument, or a single expression as its full argument.
   The macro applies the expression using the variable, and returns the result.
   If an exception is thrown, the exception message is returned instead
   "
